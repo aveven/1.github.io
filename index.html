@@ -1,0 +1,895 @@
+ <!DOCTYPE html>  
+  <html lang="ja">  
+  <head>  
+      <meta charset="UTF-8">  
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+      <title>企画部会議 報告資料 SPA</title>  
+      <script src="https://cdn.tailwindcss.com"></script>  
+      <style>  
+          body {   
+              font-family: 'Inter', sans-serif;   
+              background-color: #fffbeb; /* Light cream background for the body */  
+          }  
+          .sidebar-link.active, .sub-sidebar-link.active {   
+              background-color: #0284c7; /* Sky-600 for active sidebar link */  
+              color: white;   
+          }  
+          .sub-sidebar-link {  
+              padding-left: 2.5rem; /* Indent sub-links */  
+              font-size: 0.875rem; /* Smaller font for sub-links */  
+              color: #e5e7eb; /* Lighter text for sub-links (gray-200) */  
+          }  
+          .sub-sidebar-link:hover {  
+              background-color: #0369a1; /* Sky-700 for sub-link hover */  
+              color: white;  
+          }  
+          /* Hide mobile menu button container on medium and larger screens */  
+          @media (min-width: 768px) {  
+              #mobile-menu-button-container { display: none; }  
+          }  
+          /* Styling for image placeholder containers */  
+          .image-placeholder-container {  
+              margin-bottom: 1rem;  
+              padding: 0.5rem;  
+              background-color: #f8fafc; /* Cool Gray 50 */  
+              border-radius: 0.5rem;  
+              border: 1px solid #e2e8f0; /* Cool Gray 200 */  
+          }  
+          /* Styling for the area where images will be displayed */  
+          .image-display-area {  
+              display: flex;  
+              align-items: center;  
+              justify-content: center;  
+              background-color: #e2e8f0; /* Cool Gray 200 */  
+              border-radius: 0.375rem;  
+              min-height: 150px; /* Minimum height for the image area */  
+              margin-bottom: 0.5rem;  
+              color: #475569; /* Cool Gray 600 for placeholder text */  
+              text-align: center;  
+              overflow: hidden; /* Ensure image stays within rounded corners */  
+          }  
+          .image-display-area img {  
+              width: 100%;   
+              height: auto;   
+              max-height: 200px; /* Max height for displayed images on smaller screens */  
+              object-fit: contain; /* Ensure image fits well, maintaining aspect ratio */  
+              border-radius: 0.375rem; /* Rounded corners for the image itself */  
+          }  
+          /* Sidebar transition for mobile view */  
+          #sidebar {  
+              transition: transform 0.3s ease-in-out;  
+          }  
+          /* Keyword button styling */  
+          .keyword-btn {  
+              background-color: #e0f2fe; /* Sky-100 */  
+              color: #0c4a6e; /* Sky-800 */  
+              padding: 0.25rem 0.75rem;  
+              border-radius: 9999px; /* Pill shape */  
+              font-size: 0.875rem;  
+              margin-right: 0.5rem;  
+              margin-bottom: 0.5rem;  
+              cursor: pointer;  
+              transition: background-color 0.2s;  
+          }  
+          .keyword-btn:hover {  
+              background-color: #bae6fd; /* Sky-200 */  
+          }  
+          .keyword-btn.active-highlight {  
+              background-color: #0284c7; /* Sky-600 */  
+              color: white;  
+          }  
+          /* Styling for highlighted text points, can be toggled by clicking */  
+          .highlight-point {  
+              background-color: #fef9c3; /* Yellow-100 */  
+              border-left: 4px solid #facc15; /* Yellow-500 */  
+              padding: 0.5em;  
+              margin: 0.5em 0;  
+              border-radius: 0.2em;  
+              cursor: pointer;  
+          }  
+          /* Styling for text highlighted by keyword buttons */  
+          .highlight {  
+              background-color: #fdba74; /* Orange-300 */  
+              padding: 0.1em;  
+              border-radius: 0.2em;  
+          }  
+          /* Modal overlay for keyword definitions */  
+          .modal-overlay {  
+              position: fixed;  
+              top: 0;  
+              left: 0;  
+              right: 0;  
+              bottom: 0;  
+              background-color: rgba(0, 0, 0, 0.5);  
+              display: flex;  
+              align-items: center;  
+              justify-content: center;  
+              z-index: 50; /* Ensure modal is on top */  
+              opacity: 0;  
+              visibility: hidden;  
+              transition: opacity 0.3s ease, visibility 0.3s ease;  
+          }  
+          .modal-overlay.active {  
+              opacity: 1;  
+              visibility: visible;  
+          }  
+          .modal-content {  
+              background-color: white;  
+              padding: 2rem;  
+              border-radius: 0.5rem;  
+              box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);  
+              width: 90%;  
+              max-width: 500px;  
+              max-height: 80vh; /* Limit modal height */  
+              overflow-y: auto; /* Allow scrolling if content is too long */  
+          }  
+          /* Title for the "Overall Display" section separator */  
+          .overall-display-title {  
+              text-align: center;  
+              font-size: 1.5rem;   
+              font-weight: 600;   
+              color: #334155; /* Slate-700 */  
+              padding-top: 2rem;   
+              padding-bottom: 1rem;   
+              margin-top: 2rem; /* Space above the title */  
+              border-top: 1px solid #e2e8f0; /* Slate-200 */  
+          }  
+          /* Wrapper for each content section in the "Overall Display" */  
+          .content-section-wrapper {   
+              margin-bottom: 1.5rem;   
+          }  
+          /* Ensure white background for content sections if not overridden by Tailwind */  
+          .content-section .bg-white {  
+              background-color: #ffffff;  
+          }  
+          /* Margins for headings within content sections */  
+          .content-section h3, .content-section h4 { margin-top: 1rem; margin-bottom: 0.5rem; }  
+          .content-section ul { margin-left: 1.5rem; } /* Indent lists */  
+          /* Collapsible content area, hidden by default */  
+          .section-content-collapsible {  
+              display: none;  
+              margin-top: 1rem;  
+              padding-top: 1rem;  
+              border-top: 1px dashed #cbd5e1; /* Slate-300 */  
+          }  
+          /* Toggle button for collapsible content */  
+          .toggle-content-btn {  
+              background-image: linear-gradient(to right, #312e81, #4f46e5); /* Indigo-900 to Indigo-600 gradient */  
+              color: white;  
+              padding: 0.25rem 0.75rem;   
+              border-radius: 9999px; /* Pill shape */  
+              font-size: 0.875rem; /* Increased font size from 0.75rem */  
+              font-weight: 500; /* Medium weight */  
+              cursor: pointer;  
+              transition: all 0.2s ease-in-out;  
+              box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);  
+              white-space: nowrap; /* Prevent button text from wrapping */  
+          }  
+          .toggle-content-btn:hover {  
+              background-image: linear-gradient(to right, #3730a3, #5c54e0); /* Indigo-800 to Indigo-500 gradient on hover */  
+              box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);  
+          }  
+          /* Flex container for section header (title and toggle button) */  
+          .section-header {  
+              display: flex;  
+              justify-content: space-between;  
+              align-items: center;  
+              margin-bottom: 1rem;  
+          }  
+          /* Container for contact buttons */  
+          .contact-buttons-container {  
+              margin-top: 2rem;  
+              padding: 1.5rem;  
+              background-color: #ffffff;   
+              border-radius: 0.5rem;   
+              box-shadow: 0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);   
+              text-align: center;  
+              display: flex;  
+              gap: 1rem;   
+              justify-content: center;  
+              flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */  
+          }  
+          /* General styling for contact buttons */  
+          .contact-btn {   
+              color: white;  
+              padding: 0.6rem 1.2rem;   
+              border-radius: 9999px; /* Pill shape */  
+              font-weight: 600;   
+              transition: background-color 0.2s, box-shadow 0.2s;  
+              text-decoration: none;   
+              display: inline-flex;   
+              align-items: center;  
+              justify-content: center;  
+              min-width: 180px; /* Minimum width for contact buttons */  
+          }  
+          .email-contact-btn {  
+              background-color: #dc2626; /* Red-600 */  
+          }  
+          .email-contact-btn:hover {  
+              background-color: #b91c1c; /* Red-700 */  
+              box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4); /* Red shadow on hover */  
+          }  
+          .phone-contact-btn {  
+              background-color: #16a34a; /* Green-600 */  
+          }  
+          .phone-contact-btn:hover {  
+              background-color: #15803d; /* Green-700 */  
+              box-shadow: 0 2px 8px rgba(22, 163, 74, 0.4); /* Green shadow on hover */  
+          }  
+          /* Container for the print button in the sidebar */  
+          .print-button-container {  
+              text-align: center;  
+              margin-top: auto; /* Pushes button to the bottom of the flex container (sidebar) */  
+              padding: 1rem;   
+          }  
+          .print-btn {  
+              background-color: #57534e; /* Stone-600 */  
+              color: white;  
+              padding: 0.75rem 1.5rem;  
+              border-radius: 0.375rem;  
+              font-weight: 600;  
+              transition: background-color 0.2s;  
+              width: 100%; /* Make button full width of its container */  
+          }  
+          .print-btn:hover {  
+              background-color: #44403c; /* Stone-700 */  
+          }  
+          /* Styling for action item status select dropdown */  
+          .action-status-select {  
+              min-width: 100px; /* Ensure select is not too narrow */  
+          }  
+          /* Styling for action item notes textarea */  
+          .action-notes-input {  
+              min-height: 40px; /* Minimum height for textarea */  
+              resize: vertical; /* Allow vertical resizing */  
+          }  
+
+          /* Animation for content blocks */  
+          @keyframes fadeInUp {  
+              from {  
+                  opacity: 0;  
+                  transform: translateY(20px);  
+              }  
+              to {  
+                  opacity: 1;  
+                  transform: translateY(0);  
+              }  
+          }  
+          .animate-fade-in-up {  
+              animation: fadeInUp 0.8s ease-out forwards; /* Slower animation */  
+          }  
+
+          /* Adjust image display for larger screens */
+          @media (min-width: 768px) { /* md breakpoint and up */
+              .image-display-area {
+                  min-height: 250px; /* Increased min-height for the container */
+              }
+              .image-display-area img {
+                  max-height: 300px; /* Increased max-height for the image, allowing it to be larger */
+              }
+          }
+
+          /* Print-specific styles */  
+          @media print {  
+              body {  
+                  background-color: #ffffff !important; /* White background for printing */  
+                  background-image: none !important; /* Remove any background images */  
+              }  
+              /* Hide elements not relevant for printing */  
+              #sidebar, #mobile-menu-button-container, .toggle-content-btn, .keyword-buttons-area, #keyword-modal, .contact-buttons-container, .print-button-container, .overall-display-title, .sidebar-link h2 {  
+                  display: none !important;  
+              }  
+              main {  
+                  padding: 1rem !important; /* Adjust padding for print */  
+                  margin: 0 !important; /* Remove margins for print */  
+              }  
+              .content-section-wrapper {  
+                  margin-bottom: 1rem !important;  
+                  page-break-inside: avoid; /* Try to avoid breaking sections across pages */  
+              }  
+              .content-section .bg-white {  
+                  box-shadow: none !important; /* Remove shadows for print */  
+                  border: 1px solid #e2e8f0 !important; /* Add a light border for definition */  
+                  padding: 1rem !important;  
+                  opacity: 1 !important; /* Ensure visible if animation was cut short */
+                  transform: translateY(0) !important; /* Ensure in final position */
+              }  
+              /* Ensure collapsible content is visible for printing */  
+              .section-content-collapsible {  
+                  display: block !important;   
+                  border-top: none !important;  
+                  margin-top: 0.5rem !important;  
+                  padding-top: 0.5rem !important;  
+              }  
+              .image-placeholder-container {  
+                  padding: 0.25rem !important;  
+              }  
+              .image-display-area {  
+                  min-height: 100px !important;  
+              }  
+              .image-display-area img {  
+                  max-height: 150px !important; /* Slightly smaller images for print */  
+              }  
+              /* Ensure text is black for printing */  
+              h1, h2, h3, h4, p, li {  
+                  color: #000000 !important;  
+              }  
+              /* Basic border for form elements in print */  
+              .action-status-select, .action-notes-input {  
+                  border: 1px solid #ccc !important;   
+              }  
+              /* Hide animated elements in print explicitly if needed, though opacity/transform shouldn't affect print much */  
+              .animate-fade-in-up {  
+                  animation: none !important; /* Disable animation for print */  
+                  opacity: 1 !important; /* Ensure fully visible */  
+                  transform: translateY(0) !important; /* Ensure in final position */  
+              }  
+          }  
+      </style>  
+  </head>  
+  <body class="text-slate-800">  
+      <div class="flex flex-col md:flex-row min-h-screen">  
+          <div id="mobile-menu-button-container" class="md:hidden p-4 bg-slate-800 text-white flex justify-between items-center sticky top-0 z-20">  
+              <h1 class="text-lg sm:text-xl font-semibold">企画部会議報告</h1> <button id="mobile-menu-button" aria-label="メニューを開く">  
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">  
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />  
+                  </svg>  
+              </button>  
+          </div>  
+
+          <aside id="sidebar" class="w-64 bg-slate-800 text-slate-100 p-4 md:p-6 space-y-2 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 z-30 md:sticky md:top-0 md:h-screen flex flex-col overflow-y-auto">  
+              <div class="hidden md:block">  
+                   <h1 class="text-xl xl:text-2xl font-semibold text-white mb-6">企画部会議報告</h1> </div>  
+              <nav id="main-nav" class="flex-grow">  
+                  </nav>  
+              <div class="print-button-container">  
+                  <button id="print-page-btn" class="print-btn">このページを印刷</button>  
+              </div>  
+          </aside>  
+
+          <main id="main-content-area" class="flex-1 p-4 sm:p-6 md:p-10 overflow-y-auto pt-16 sm:pt-20 md:pt-10"> </main>  
+
+      <div id="all-sections-template" style="display: none;">   
+          <section id="intro" class="content-section space-y-6 scroll-mt-16 md:scroll-mt-4"> <div class="bg-white p-6 rounded-lg shadow-lg"> <div class="section-header"> <h2 class="text-xl sm:text-2xl font-semibold text-sky-600" id="sub-intro-main">1. はじめに</h2> <button class="toggle-content-btn">内容を確認する</button> </div> <div class="image-placeholder-container"> <div class="image-display-area"> <img src="1.jpeg" alt="会議のイメージ 1" onerror="this.onerror=null;this.src='https://placehold.co/600x250/E2E8F0/4A5568?text=Error+loading+1.jpeg';"> </div> </div> <div class="section-content-collapsible"> <div class="keyword-buttons-area mb-4"> <button class="keyword-btn" data-keyword="進捗報告" data-definition="各担当業務の進捗状況に関する報告のことです。">進捗報告</button> <button class="keyword-btn" data-keyword="AI技術" data-definition="人工知能（Artificial Intelligence）に関する技術全般を指します。業務効率化や新しい価値創造に活用されます。">AI技術</button> <button class="keyword-btn" data-keyword="連携強化" data-definition="部門間やチーム間の協力関係をより強くし、円滑な業務遂行を目指すことです。">連携強化</button> </div> <div class="text-content-for-highlight"> <p class="text-lg leading-relaxed highlightable-text">本日の企画部会議では、各担当業務の進捗報告、課題の共有、そして今後のアクションプランについて活発な議論が行われました。特に、データに基づいた施策改善、AI技術の積極的な活用、そして部門間の連携強化が重点的に話し合われました。この資料では、会議の主要な内容を分かりやすくまとめ、今後の活動に繋げていくことを目的としています。</p> </div> </div> </div> </section>  
+          <section id="abe_share" class="content-section space-y-6 scroll-mt-16 md:scroll-mt-4"> <div class="bg-white p-6 rounded-lg shadow-lg"> <div class="section-header"> <h2 class="text-xl sm:text-2xl font-semibold text-sky-600" id="sub-abe_share-main">2. 阿部部長からの共有事項</h2> <button class="toggle-content-btn">内容を確認する</button> </div> <div class="image-placeholder-container"> <div class="image-display-area"> <img src="2.jpeg" alt="アイデアとAIの融合 イメージ 2" onerror="this.onerror=null;this.src='https://placehold.co/600x250/E2E8F0/4A5568?text=Error+loading+2.jpeg';"> </div> </div> <div class="section-content-collapsible"> <div class="keyword-buttons-area mb-4"> <button class="keyword-btn" data-keyword="ミッションステートメント" data-definition="組織や個人が持つべき使命や基本的な価値観を明文化したものです。">ミッションステートメント</button> <button class="keyword-btn" data-keyword="AI技術" data-definition="人工知능（Artificial Intelligence）に関する技術全般を指します。業務効率化や新しい価値創造に活用されます。">AI技術</button> <button class="keyword-btn" data-keyword="価値創造" data-definition="新しい価値を生み出すこと、または既存の価値を高める活動のことです。">価値創造</button> <button class="keyword-btn" data-keyword="Notion" data-definition="ドキュメント作成、タスク管理、データベース構築などが可能な多機能な情報共有ツールです。">Notion</button> </div> <div class="text-content-for-highlight"> <p class="mb-4 text-lg highlightable-text">阿部部長より、以下のミッションと現状認識、今後の展望について共有がありました。</p> <div class="mb-6 p-4 bg-sky-50 rounded-md"> <h3 class="text-lg sm:text-xl font-semibold text-sky-700 mb-2" id="sub-abe_share-mission">ミッションステートメントの再確認</h3> <p class="italic text-slate-700 highlightable-text">「私たちは、未開の力、価値を創造し、感謝と愛情をもって人と接し、感動のシナジーを作り出す。」</p> </div> <div class="mb-6 p-4 bg-sky-50 rounded-md"> <h3 class="text-lg sm:text-xl font-semibold text-sky-700 mb-2" id="sub-abe_share-issues">現状の取り組みと課題</h3> <ul class="list-disc list-inside space-y-1 text-slate-700 highlightable-text"> <li>AI技術（チャットボット開発、Liny AI問合せシステム、AI Luca試験運用、AIによるLP量産計画など）の積極的なインプットと活用。</li> <li>インプット過多によるアウトプット（成果）への不安と、その解消に向けた行動の重要性。</li> <li>未開拓な価値創造への挑戦（例：LinyのAIチャットボットによる社内知見の集約）。</li> </ul> </div> <div class="mb-6 p-4 bg-sky-50 rounded-md"> <h3 class="text-lg sm:text-xl font-semibold text-sky-700 mb-2" id="sub-abe_share-expectations">メンバーへの期待と感謝</h3> <ul class="list-disc list-inside space-y-1 text-slate-700 highlightable-text"> <li>各メンバーが現場で成果を出し続けていることへの感謝。</li> <li>これにより、部長自身が第二領域（未開拓分野）へ注力できている現状。</li> <li>Notion活用による情報整理・効率化の推進。</li> </ul> </div> <h3 class="text-lg sm:text-xl font-semibold text-sky-700 mb-2" id="sub-abe_share-comments">各メンバーからのコメント</h3> <ul class="list-disc list-inside space-y-1 text-slate-700 highlightable-text"> <li><strong>千早氏:</strong> AIチャットボットは便利で良いと感じる。</li> <li><strong>渡辺氏:</strong> 部長の試行錯誤の重要性に共感。自身のマンパワー不足を認識しており、企画部の取り組みによる業務効率化に期待。</li> <li><strong>藤方氏:</strong> 部長の「0→1」の取り組みを具体化し、価値向上に貢献したい。</li> <li><strong>土屋氏:</strong> 各自が役割を全うすることでチームとしての成果が出ると認識。</li> </ul> </div> </div> </div> </section>  
+          <section id="chihaya_report" class="content-section space-y-6 scroll-mt-16 md:scroll-mt-4"> <div class="bg-white p-6 rounded-lg shadow-lg"> <div class="section-header"> <h2 class="text-xl sm:text-2xl font-semibold text-sky-600" id="sub-chihaya_report-main">3-1. 千早 克典 氏 報告</h2> <button class="toggle-content-btn">内容を確認する</button> </div> <div class="image-placeholder-container"> <div class="image-display-area"> <img src="3.jpeg" alt="バナーデザインとシステム構築 イメージ 3" onerror="this.onerror=null;this.src='https://placehold.co/600x250/E2E8F0/4A5568?text=Error+loading+3.jpeg';"> </div> </div> <div class="section-content-collapsible"> <div class="keyword-buttons-area mb-4"> <button class="keyword-btn" data-keyword="LINEバナー" data-definition="LINEプラットフォーム上で表示される広告や告知用の画像のことです。">LINEバナー</button> <button class="keyword-btn" data-keyword="Liny構築" data-definition="LINE公式アカウントの機能を拡張し、マーケティングや顧客管理を自動化・効率化するツール「Liny」のシステム設定やカスタマイズを行うことです。">Liny構築</button> <button class="keyword-btn" data-keyword="効果検証" data-definition="実施した施策やキャンペーンが、どの程度の効果があったかをデータに基づいて分析・評価することです。">効果検証</button> <button class="keyword-btn" data-keyword="A/Bテスト" data-definition="2つ以上の異なるパターンの広告やデザインを用意し、どちらがより高い効果を上げるかを比較検証するテスト手法です。">A/Bテスト</button> </div> <div class="text-content-for-highlight"> <h3 class="text-lg sm:text-xl font-semibold text-sky-700 mt-4 mb-2" id="sub-chihaya_report-content">報告内容</h3> <ul class="list-disc list-inside space-y-1 text-slate-700 highlightable-text"> <li>LINEバナー制作 (エアコン、バッテリー、タイヤ、洗車キャンペーン等、計12枚)</li> <li>Liny構築 (つくば支店様 抽選会配信準備、車検リッチタップ自動配信構築)</li> <li>デジプリ移行係数集計、移行システム構築</li> <li>バナー制作におけるAI活用 (素材検索時間の短縮、画像生成)</li> </ul> <h3 class="text-lg sm:text-xl font-semibold text-sky-700 mt-6 mb-2" id="sub-chihaya_report-feedback">主なフィードバックとアクション</h3> <div class="grid md:grid-cols-2 gap-4 highlightable-text"> <div class="p-4 bg-green-50 rounded-md"> <h4 class="text-base sm:text-lg font-semibold text-green-700 mb-1">良かった点</h4> <ul class="list-disc list-inside text-sm text-green-600"><li>バナー制作時間の大幅短縮とクオリティ向上。</li></ul> </div> <div class="p-4 bg-red-50 rounded-md"> <h4 class="text-base sm:text-lg font-semibold text-red-700 mb-1">課題・改善点</h4> <ul class="list-disc list-inside text-sm text-red-600"> <li>効果検証の深化：作成バナーの具体的成果（タップ率、予約数等）を詳細に追跡・報告。</li> <li>A/Bテストの徹底：1施策に対し最低2パターンのデザイン/訴求を用意し比較検証。</li> <li>Liny構築時間の更なる短縮：目標時間を意識し効率化。</li> <li>漫画LPの改善：構成、文字量、吹き出しサイズ、訴求内容の明確化。</li> <li>CTA (Call to Action) の意識強化：ユーザー行動を促すデザイン追求。</li> </ul> </div> </div> <h4 class="text-base sm:text-lg font-semibold text-sky-700 mt-4 mb-1" id="sub-chihaya_report-actionitems">次回のアクション</h4> <ul class="list-disc list-inside space-y-1 text-slate-700 highlightable-text"> <li>効果検証のフォーマットを確立し、具体的な数値で報告する。</li> <li>今後のバナー制作では必ずA/Bテストを実施し、その結果を共有する。</li> <li>Liny構築作業の標準作業時間（SOP）の確立と、それに基づく時間管理。</li> <li>AIによる画像生成のスキルをさらに高め、業務効率化に繋げる。</li> </ul> </div> </div> </div> </section>  
+          <section id="fujikata_report" class="content-section space-y-6 scroll-mt-16 md:scroll-mt-4"> <div class="bg-white p-6 rounded-lg shadow-lg"> <div class="section-header"> <h2 class="text-xl sm:text-2xl font-semibold text-sky-600" id="sub-fujikata_report-main">3-2. 藤方 優樹 氏 報告</h2> <button class="toggle-content-btn">内容を確認する</button> </div> <div class="image-placeholder-container"> <div class="image-display-area"> <img src="4.jpeg" alt="データ分析と戦略立案 イメージ 4" onerror="this.onerror=null;this.src='https://placehold.co/600x250/E2E8F0/4A5568?text=Error+loading+4.jpeg';"> </div> </div> <div class="section-content-collapsible"> <div class="keyword-buttons-area mb-4"> <button class="keyword-btn" data-keyword="効果検証" data-definition="実施した施策やキャンペーンが、どの程度の効果があったかをデータに基づいて分析・評価することです。">効果検証</button> <button class="keyword-btn" data-keyword="洗車キャンペーン" data-definition="洗車サービスをお得に利用できる期間限定の販売促進活動のことです。">洗車キャンペーン</button> <button class="keyword-btn" data-keyword="クーポン" data-definition="特定の商品やサービスを割引価格で利用できる券のことです。新規顧客獲得やリピート促進に用いられます。">クーポン</button> <button class="keyword-btn" data-keyword="データ抽出" data-definition="データベースやシステムから特定の条件に合致する情報を取り出すことです。">データ抽出</button> </div> <div class="text-content-for-highlight"> <h3 class="text-lg sm:text-xl font-semibold text-sky-700 mt-4 mb-2" id="sub-fujikata_report-content">報告内容</h3> <h4 class="text-base sm:text-lg font-semibold text-slate-700 mb-1">4月施策の効果検証:</h4> <ul class="list-disc list-inside space-y-1 text-slate-700 ml-4 highlightable-text"> <li>洗車キャンペーン: 手洗い洗車時間変更（30分→45分）による予約枠減少が影響し、ネット予約数が前年比減。</li> <li>新規顧客向けクーポン: 金額明示型（例: 500円引き）は効果あり、高単価商品や割引率提示型は効果薄。</li> <li>オイル交換キャンペーン: メンテナンスパック加入者増によるピット圧迫が影響し、家内SSで予約減。</li> </ul> <h4 class="text-base sm:text-lg font-semibold text-slate-700 mt-2 mb-1">制作物・導入ツール:</h4> <ul class="list-disc list-inside space-y-1 text-slate-700 ml-4 highlightable-text"> <li>One Team年間実績表 (Googleスプレッドシート): データ抽出時間の大幅削減。</li> <li>ピットロック予約データ抽出フォーム (Googleスプレッドシート): 効果検証にかかる時間短縮。</li> <li>ハラスメント研修テスト問題作成。</li> </ul> <h4 class="text-base sm:text-lg font-semibold text-slate-700 mt-2 mb-1">進行中の施策:</h4> <ul class="list-disc list-inside space-y-1 text-slate-700 ml-4 highlightable-text"> <li>デジプリ期間限定ボーナスシステム構築。</li> <li>Liny/Lステップ活用強化による収益最大化（ファンクラブ構想など）。</li> </ul> <h3 class="text-lg sm:text-xl font-semibold text-sky-700 mt-6 mb-2" id="sub-fujikata_report-feedback">主なフィードバックとアクション</h3> <div class="grid md:grid-cols-2 gap-4 highlightable-text"> <div class="p-4 bg-green-50 rounded-md"> <h4 class="text-base sm:text-lg font-semibold text-green-700 mb-1">良かった点</h4> <ul class="list-disc list-inside text-sm text-green-600"> <li>データ集計・分析ツールの作成による業務効率化。</li> <li>詳細なデータに基づく分析。</li> </ul> </div> <div class="p-4 bg-red-50 rounded-md"> <h4 class="text-base sm:text-lg font-semibold text-red-700 mb-1">課題・改善点</h4> <ul class="list-disc list-inside text-sm text-red-600"> <li>分析の抽象化レベル向上：データから安易な結論を導かず、多角的な視点（現場ヒアリング、AI活用等）で要因を深掘りし本質的課題を特定。</li> <li>現場ヒアリングの徹底：数値データで見えない現場状況を把握し分析に反映。</li> <li>データ解釈の客観性：主観だけでなく客観的データと論理に基づいた解釈を心がける。</li> </ul> </div> </div> <h4 class="text-base sm:text-lg font-semibold text-sky-700 mt-4 mb-1" id="sub-fujikata_report-actionitems">次回のアクション</h4> <ul class="list-disc list-inside space-y-1 text-slate-700 highlightable-text"> <li>今後の効果検証では、必ず現場ヒアリングを実施し、その内容を分析に加味する。</li> <li>AI（ChatGPTなど）を活用し、データ分析の視点や抽象化の訓練を行う。</li> <li>One Team年間実績表に累計データを追加し、視認性を向上させる。</li> <li>家内SSのLiny予約システム刷新効果（UI改善による新規顧客増など）を明確に示せるようデータ収集・分析方法を再検討する。</li> <li>永井石油様向けLinyシステム構築を完了させる。</li> <li>小出氏からのデジプリ販売者特定依頼に対応する。</li> </ul> </div> </div> </div> </section>  
+          <section id="watanabe_a_report" class="content-section space-y-6 scroll-mt-16 md:scroll-mt-4"> <div class="bg-white p-6 rounded-lg shadow-lg"> <div class="section-header"> <h2 class="text-xl sm:text-2xl font-semibold text-sky-600" id="sub-watanabe_a_report-main">3-3. 篤史 渡辺 氏 報告</h2> <button class="toggle-content-btn">内容を確認する</button> </div> <div class="image-placeholder-container"> <div class="image-display-area"> <img src="5.jpeg" alt="名刺・QRとコミュニケーション イメージ 5" onerror="this.onerror=null;this.src='https://placehold.co/600x250/E2E8F0/4A5568?text=Error+loading+5.jpeg';"> </div> </div> <div class="section-content-collapsible"> <div class="text-content-for-highlight"> <h3 class="text-lg sm:text-xl font-semibold text-sky-700 mt-4 mb-2" id="sub-watanabe_a_report-content">報告内容</h3> <ul class="list-disc list-inside space-y-1 text-slate-700 highlightable-text"> <li>タイヤ獲得促進を目的とした名刺サイズのQRコード付きツールの制作進捗。 <ul class="list-circle list-inside ml-4"> <li>スタッフが顧客に配布しやすいツールを目指す。</li> <li>QRコード読み込みで、LINEのタイヤ割引情報ページへ誘導。</li> <li>デザイン案を複数作成し、所長やスタッフから意見聴取中。</li> </ul> </li> </ul> <h3 class="text-lg sm:text-xl font-semibold text-sky-700 mt-6 mb-2" id="sub-watanabe_a_report-feedback">主なフィードバックとアクション</h3> <div class="grid md:grid-cols-2 gap-4 highlightable-text"> <div class="p-4 bg-green-50 rounded-md"> <h4 class="text-base sm:text-lg font-semibold text-green-700 mb-1">良かった点</h4> <ul class="list-disc list-inside text-sm text-green-600"><li>スタッフの意見を取り入れ、現場で活用しやすいツールを目指す姿勢。</li></ul> </div> <div class="p-4 bg-red-50 rounded-md"> <h4 class="text-base sm:text-lg font-semibold text-red-700 mb-1">課題・改善点</h4> <ul class="list-disc list-inside text-sm text-red-600"> <li>デザイン改善（視認性、情報伝達の明確化、色使い、QRコード配置/サイズ）。</li> <li>効果測定の実施（配布枚数、QR読込数、読込後アクション記録・分析、A/Bテスト）。</li> <li>報告フォーマット確立（目的・施策・効果検証の構成）。</li> </ul> </div> </div> <h4 class="text-base sm:text-lg font-semibold text-sky-700 mt-4 mb-1" id="sub-watanabe_a_report-actionitems">次回のアクション</h4> <ul class="list-disc list-inside space-y-1 text-slate-700 highlightable-text"> <li>提示されたデザイン案（特に黄色いカードの「5月中」の文字など）について、フォントや配色を再検討し、視認性を向上させる。</li> <li>名刺サイズという限られたスペースで最大限の効果を出すため、掲載情報を精査し、キャッチーなコピーを検討する。</li> <li>QRコード読み込み後のランディングページの内容と連動させ、一貫した顧客体験を提供する。</li> <li>A/Bテストの計画を立て、具体的なKPIを設定する。</li> <li>大石氏との店舗作りに関する知見共有の時間を調整する。</li> </ul> </div> </div> </div> </section>  
+          <section id="tsuchiya_report" class="content-section space-y-6 scroll-mt-16 md:scroll-mt-4"> <div class="bg-white p-6 rounded-lg shadow-lg"> <div class="section-header"> <h2 class="text-xl sm:text-2xl font-semibold text-sky-600" id="sub-tsuchiya_report-main">3-4. Takuro Tsuchiya 氏 報告</h2> <button class="toggle-content-btn">内容を確認する</button> </div> <div class="image-placeholder-container"> <div class="image-display-area"> <img src="6.jpeg" alt="チームワークと目標達成 イメージ 6" onerror="this.onerror=null;this.src='https://placehold.co/600x250/E2E8F0/4A5568?text=Error+loading+6.jpeg';"> </div> </div> <div class="section-content-collapsible"> <div class="text-content-for-highlight"> <h3 class="text-lg sm:text-xl font-semibold text-sky-700 mt-4 mb-2" id="sub-tsuchiya_report-content">報告内容</h3> <h4 class="text-base sm:text-lg font-semibold text-slate-700 mb-1">社長への隔月報告（初回）の骨子:</h4> <ul class="list-disc list-inside space-y-1 text-slate-700 ml-4 highlightable-text"> <li>今年度の役割: 市長・部長・統括の思いを現場に繋ぐ「橋渡し役」。</li> <li>テーマ: 自己変革から組織変革へ。</li> <li>ミッション: 1. 組織変革（One Team導入）、2. 洗車開拓強化。</li> </ul> <h4 class="text-base sm:text-lg font-semibold text-slate-700 mt-2 mb-1">4月実績報告（主なもの）:</h4> <ul class="list-disc list-inside space-y-1 text-slate-700 ml-4 highlightable-text"> <li>洗車台数・利用率: 目標未達。対策としてイベント開催、楽天洗車活用。</li> <li>洗車受注単価: 目標達成。</li> <li>プリカ商品合計: 前年比90%。</li> <li>タイヤ販売本数: 前年比134%（アイコン含めると515%）と好調。</li> </ul> <h4 class="text-base sm:text-lg font-semibold text-slate-700 mt-2 mb-1">若手所長チーム「つむじ風」発足:</h4> <ul class="list-disc list-inside space-y-1 text-slate-700 ml-4 highlightable-text"> <li>目的: 次世代リーダー育成、圧倒的な熱量と成長。</li> <li>活動計画: 6月にタイヤボールイベント開催など。</li> </ul> <h4 class="text-base sm:text-lg font-semibold text-slate-700 mt-2 mb-1">企画部メンバーへの期待:</h4> <p class="text-slate-700 ml-4 highlightable-text">各分野のプロフェッショナルとしての活躍とサポート。</p> <h3 class="text-lg sm:text-xl font-semibold text-sky-700 mt-6 mb-2" id="sub-tsuchiya_report-feedback">主なフィードバックとアクション</h3> <div class="grid md:grid-cols-2 gap-4 highlightable-text"> <div class="p-4 bg-green-50 rounded-md"> <h4 class="text-base sm:text-lg font-semibold text-green-700 mb-1">良かった点</h4> <ul class="list-disc list-inside text-sm text-green-600"> <li>明確な目標設定と具体的な行動計画。</li> <li>社長報告に向けた準備。</li> </ul> </div> <div class="p-4 bg-red-50 rounded-md"> <h4 class="text-base sm:text-lg font-semibold text-red-700 mb-1">課題・改善点</h4> <ul class="list-disc list-inside text-sm text-red-600"> <li>社長報告のポイント（KPTシート目的明確化、SS現状特に「人」情報、社長の関心事とのバランス）。</li> <li>「つむじ風」運営（計画的メンバー増、影響力拡大、参加しやすい雰囲気作り）。</li> <li>洗車実績分析（高単価メニューと作業時間のバランス、店舗オペレーション考慮）。</li> </ul> </div> </div> <h4 class="text-base sm:text-lg font-semibold text-sky-700 mt-4 mb-1" id="sub-tsuchiya_report-actionitems">次回のアクション</h4> <ul class="list-disc list-inside space-y-1 text-slate-700 highlightable-text"> <li>社長報告資料に、KPTシートの活用目的、各SSの「人」に関する現状報告、自身の分析・見解を追記する。</li> <li>洗車リーダー・アルバイトリーダー会議を6月に実施し、理念浸透と等級制度の意義を強化する。</li> <li>等級制度のバッジまたはステッカーの試作品を6月の会議で発表する。</li> <li>Linyの全社的活用（特にアルバイトリーダー等への情報共有）を検討・推進する。</li> <li>堀之内SSでのトライさんへのOJTサポートを継続する。</li> </ul> </div> </div> </div> </section>  
+          <section id="abe_manager_report" class="content-section space-y-6 scroll-mt-16 md:scroll-mt-4"> <div class="bg-white p-6 rounded-lg shadow-lg"> <div class="section-header"> <h2 class="text-xl sm:text-2xl font-semibold text-sky-600" id="sub-abe_manager_report-main">3-5. 阿部部長 報告</h2> <button class="toggle-content-btn">内容を確認する</button> </div> <div class="image-placeholder-container"> <div class="image-display-area"> <img src="7.jpeg" alt="連携と未来技術 イメージ 7" onerror="this.onerror=null;this.src='https://placehold.co/600x250/E2E8F0/4A5568?text=Error+loading+7.jpeg';"> </div> </div> <div class="section-content-collapsible"> <div class="keyword-buttons-area mb-4"> <button class="keyword-btn" data-keyword="AIチャットボット" data-definition="AIを活用し、人間と自然な会話形式で対話できるプログラムです。顧客対応や情報提供の自動化に利用されます。">AIチャットボット</button> <button class="keyword-btn" data-keyword="カンファレンス" data-definition="特定のテーマに関する大規模な会議や集会で、情報交換やネットワーキングの場となります。">カンファレンス</button> <button class="keyword-btn" data-keyword="SaaS" data-definition="Software as a Serviceの略。インターネット経由で提供されるソフトウェアサービスで、必要な時に必要な分だけ利用できます。">SaaS</button> <button class="keyword-btn" data-keyword="Notion" data-definition="ドキュメント作成、タスク管理、データベース構築などが可能な多機能な情報共有ツールです。">Notion</button> </div> <div class="text-content-for-highlight"> <h3 class="text-lg sm:text-xl font-semibold text-sky-700 mt-4 mb-2" id="sub-abe_manager_report-content">報告内容</h3> <ul class="list-disc list-inside space-y-1 text-slate-700 highlightable-text"> <li>サイトウ様との業務委託（エアコンポスター作成など）。</li> <li>AIチャットボット作成による自身の業務時間削減。</li> <li>Zoom AI議事録の開始、会議用マイク導入。</li> <li>Notionの活用推進による情報整理・ナレッジ共有。</li> <li>LINEカンファレンスへの参加（最新情報の収集）。</li> <li>マネージャー基礎研修への参加。</li> <li>AI関連プロジェクトの推進: <ul class="list-circle list-inside ml-4"> <li>リニーAI問合せチャットボット開発。</li> <li>AI Luca（相模原SSで試験運用）。</li> <li>AIによるウェブページ（LP）量産計画（Jindoなどを検討）。</li> </ul> </li> <li>SaaSアカウントの最適化提案: <ul class="list-circle list-inside ml-4"> <li>Zoom、ChatGPTなどの有料アカウントを部署・会社単位で統合し、コストを削減。</li> <li>削減した費用を他の有望なAIツールの導入に充当する。</li> </ul> </li> </ul> <h3 class="text-lg sm:text-xl font-semibold text-sky-700 mt-6 mb-2" id="sub-abe_manager_report-feedback">主なフィードバックとアクション</h3> <div class="grid md:grid-cols-2 gap-4 highlightable-text"> <div class="p-4 bg-green-50 rounded-md"> <h4 class="text-base sm:text-lg font-semibold text-green-700 mb-1">良かった点</h4> <ul class="list-disc list-inside text-sm text-green-600"> <li>AI技術の積極的な導入と業務効率化への貢献。</li> <li>コスト意識と具体的な改善提案。</li> </ul> </div> <div class="p-4 bg-red-50 rounded-md"> <h4 class="text-base sm:text-lg font-semibold text-red-700 mb-1">課題・改善点</h4> <ul class="list-disc list-inside text-sm text-red-600"> <li>AIによるウェブページ（LP）制作は、既存のホームページ（サイト職人）との役割分担や連携を考慮する。</li> <li>SaaSアカウントの共有化は、利用規約やセキュリティ面も確認しつつ、性善説に基づいた運用ルールを策定する。</li> </ul> </div> </div> <h4 class="text-base sm:text-lg font-semibold text-sky-700 mt-4 mb-1" id="sub-abe_manager_report-actionitems">次回のアクション</h4> <ul class="list-disc list-inside space-y-1 text-slate-700 highlightable-text"> <li>LINEカンファレンスの内容を企画部メンバーに共有する。</li> <li>Zoom等のアカウント統合とAIツール導入に関する提案を社長に行う。</li> <li>AIによるLP制作ツールの選定と導入準備を進める。</li> <li>Notionの活用方法を部内で共有し、ナレッジマネジメントを強化する。</li> </ul> </div> </div> </div> </section>  
+          <section id="overall_summary" class="content-section space-y-6 scroll-mt-16 md:scroll-mt-4"> <div class="bg-white p-6 rounded-lg shadow-lg"> <div class="section-header"> <h2 class="text-xl sm:text-2xl font-semibold text-sky-600" id="sub-overall_summary-main">4. 会議全体のまとめと今後の課題</h2> <button class="toggle-content-btn">内容を確認する</button> </div> <div class="image-placeholder-container"> <div class="image-display-area"> <img src="8.jpeg" alt="会議のまとめと次のステップ イメージ 8" onerror="this.onerror=null;this.src='https://placehold.co/600x250/E2E8F0/4A5568?text=Error+loading+8.jpeg';"> </div> </div> <div class="section-content-collapsible"> <div class="keyword-buttons-area mb-4"> <button class="keyword-btn" data-keyword="A/Bテスト" data-definition="2つ以上の異なるパターンの広告やデザインを用意し、どちらがより高い効果を上げるかを比較検証するテスト手法です。">A/Bテスト</button> <button class="keyword-btn" data-keyword="定性情報" data-definition="数値化できない質的な情報のこと。顧客の声やインタビュー、アンケートの自由記述などが該当します。">定性情報</button> <button class="keyword-btn" data-keyword="アジェンダ管理" data-definition="会議の議題や進行計画（アジェンダ）を事前に準備し、それに沿って会議を効率的に運営することです。">アジェンダ管理</button> </div> <div class="text-content-for-highlight"> <h3 class="text-lg sm:text-xl font-semibold text-sky-700 mt-4 mb-2" id="sub-overall_summary-decisions">主要な決定事項・確認事項</h3> <ul class="list-disc list-inside space-y-1 text-slate-700 highlightable-text"> <li>データに基づいた施策立案と効果検証のサイクルを徹底する。</li> <li>A/Bテストを積極的に導入し、各施策の最適化を図る。</li> <li>AI技術の学習と活用を全部門で推進し、業務効率と成果向上を目指す。</li> <li>現場の声を重視し、数値データと定性情報を組み合わせた分析を行う。</li> <li>若手育成とチーム力強化のための取り組み（「つむじ風」など）を継続する。</li> </ul> <h3 class="text-lg sm:text-xl font-semibold text-sky-700 mt-6 mb-2" id="sub-overall_summary-challenges">今後の主な課題</h3> <ul class="list-disc list-inside space-y-1 text-slate-700 highlightable-text"> <li>効果検証の精度向上と、具体的な改善アクションへの迅速な落とし込み。</li> <li>各メンバーの資料作成能力、プレゼンテーション能力の向上。</li> <li>長時間会議の効率化（アジェンダ管理、時間配分）。</li> <li>SaaSツールの最適化と、費用対効果の高いAIツールの選定・導入。</li> </ul> </div> </div> </div> </section>  
+          <section id="action_items_list" class="content-section space-y-6 scroll-mt-16 md:scroll-mt-4"> <div class="bg-white p-6 rounded-lg shadow-lg"> <div class="section-header"> <h2 class="text-xl sm:text-2xl font-semibold text-sky-600" id="sub-action_items_list-main">5. 各人の次回のアクション一覧</h2> <button class="toggle-content-btn">内容を確認する</button> </div> <div class="image-placeholder-container"> <div class="image-display-area"> <img src="9.jpeg" alt="次回のアクション・チェックリスト イメージ 9" onerror="this.onerror=null;this.src='https://placehold.co/600x250/E2E8F0/4A5568?text=Error+loading+9.jpeg';"> </div> </div> <div class="section-content-collapsible"> <div class="overflow-x-auto"> <table class="min-w-full divide-y divide-slate-200"> <thead class="bg-slate-100"> <tr> <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-slate-500 uppercase tracking-wider">担当者</th> <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-slate-500 uppercase tracking-wider">次回のアクション</th> <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-slate-500 uppercase tracking-wider">期限目安</th> <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-slate-500 uppercase tracking-wider">進捗状況</th> <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-slate-500 uppercase tracking-wider">メモ</th> </tr> </thead> <tbody class="bg-white divide-y divide-slate-200" id="action-items-tbody-all"> </tbody> </table> </div> </div> </div> </section>  
+          <section id="meeting_evaluation" class="content-section space-y-6 scroll-mt-16 md:scroll-mt-4"> <div class="bg-white p-6 rounded-lg shadow-lg"> <div class="section-header"> <h2 class="text-xl sm:text-2xl font-semibold text-sky-600" id="sub-meeting_evaluation-main">6. 会議の評価</h2> <button class="toggle-content-btn">内容を確認する</button> </div> <div class="image-placeholder-container"> <div class="image-display-area"> <img src="10.jpeg" alt="会議の評価と改善サイクル イメージ 10" onerror="this.onerror=null;this.src='https://placehold.co/600x250/E2E8F0/4A5568?text=Error+loading+10.jpeg';"> </div> </div> <div class="section-content-collapsible"> <div class="keyword-buttons-area mb-4"> <button class="keyword-btn" data-keyword="AI活用" data-definition="人工知能技術を業務や施策に取り入れ、効率化や成果向上を目指すことです。">AI活用</button> <button class="keyword-btn" data-keyword="データドリブン" data-definition="勘や経験だけに頼らず、収集・分析したデータに基づいて意思決定を行うアプローチです。">データドリブン</button> <button class="keyword-btn" data-keyword="改善点" data-definition="現状よりも良くするための具体的なポイントや提案のことです。">改善点</button> </div> <div class="text-content-for-highlight"> <div class="grid md:grid-cols-3 gap-6"> <div> <h3 class="text-lg sm:text-xl font-semibold text-green-700 mb-2" id="sub-meeting_evaluation-good">良かった点</h3> <ul class="list-disc list-inside space-y-1 text-green-600 highlightable-text"> <li>各メンバーからの具体的な活動報告と進捗共有。</li> <li>データに基づいた分析と改善提案の活発化。</li> <li>AI活用への高い意識と具体的な取り組みの進展。</li> <li>組織変革に向けた新しい試み（KPTシート、「つむじ風」など）の開始。</li> <li>建設的なフィードバックと具体的な改善点の提示。</li> </ul> </div> <div> <h3 class="text-lg sm:text-xl font-semibold text-red-700 mb-2" id="sub-meeting_evaluation-improve">改善点</h3> <ul class="list-disc list-inside space-y-1 text-red-600 highlightable-text"> <li>一部の分析における抽象化レベルの向上と、より深い洞察の必要性。</li> <li>効果検証における変数管理と現場ヒアリングの重要性の再認識。</li> <li>会議時間の効率化（アジェンダ管理、時間配分）。</li> <li>上位層への報告を意識した資料構成・ポイントの絞り込み。</li> </ul> </div> <div> <h3 class="text-lg sm:text-xl font-semibold text-sky-700 mb-2" id="sub-meeting_evaluation-overall">総評</h3> <p class="text-slate-700 highlightable-text">活発な議論と具体的なアクションプランへの言及が多く、建設的な会議でした。特にAI活用とデータドリブンな意思決定への強い志向が見受けられ、企画部としての進化が期待されます。一方で、分析の深さや報告の仕方には個人差があり、継続的なスキルアップと標準化が望まれます。</p> </div> </div> </div> </div> </div> </section>  
+          <section id="final_remarks" class="content-section space-y-6 scroll-mt-16 md:scroll-mt-4"> <div class="bg-white p-6 rounded-lg shadow-lg"> <div class="section-header"> <h2 class="text-xl sm:text-2xl font-semibold text-sky-600" id="sub-final_remarks-main">7. おわりに</h2> <button class="toggle-content-btn">内容を確認する</button> </div> <div class="image-placeholder-container"> <div class="image-display-area"> <img src="11.jpeg" alt="未来への展望とチームワーク イメージ 11" onerror="this.onerror=null;this.src='https://placehold.co/600x250/E2E8F0/4A5568?text=Error+loading+11.jpeg';"> </div> </div> <div class="section-content-collapsible"> <p class="text-lg leading-relaxed highlightable-text">本日の会議で共有された内容、決定されたアクションを各々が確実に実行し、次回の会議で更なる進捗と成果を報告できるよう努めましょう。引き続き、チーム一丸となって価値創造に取り組んでいきましょう。</p> <p class="mt-4 text-right font-semibold text-slate-700 highlightable-text">以上</p> </div> </div> </section>  
+      </div>  
+
+      <template id="contact-buttons-template">  
+          <div class="contact-buttons-container">  
+               <a href="mailto:abe@c-c-enelife" class="contact-btn email-contact-btn">部長へメールで問い合わせる</a>  
+               <a href="tel:08040645030" class="contact-btn phone-contact-btn">電話で問い合わせる</a>  
+          </div>  
+      </template>  
+
+      <div id="keyword-modal" class="modal-overlay">  
+          <div class="modal-content">  
+              <div class="flex justify-between items-center mb-4">  
+                  <h3 id="modal-title" class="text-xl font-semibold text-sky-700">キーワード解説</h3>  
+                  <button id="modal-close-btn" class="text-slate-500 hover:text-slate-700">  
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">  
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />  
+                      </svg>  
+                  </button>  
+              </div>  
+              <p id="modal-definition" class="text-slate-700"></p>  
+          </div>  
+      </div>  
+
+      <script>  
+          document.addEventListener('DOMContentLoaded', function () {  
+              // --- DOM Element References ---  
+              const sidebar = document.getElementById('sidebar');  
+              const mobileMenuButton = document.getElementById('mobile-menu-button');  
+              const nav = document.getElementById('main-nav');  
+              const mainContentArea = document.getElementById('main-content-area');  
+              const allSectionsTemplateContainer = document.getElementById('all-sections-template');  
+              const keywordModal = document.getElementById('keyword-modal');  
+              const modalTitle = document.getElementById('modal-title');  
+              const modalDefinition = document.getElementById('modal-definition');  
+              const modalCloseBtn = document.getElementById('modal-close-btn');  
+              const contactButtonsTemplate = document.getElementById('contact-buttons-template');  
+              const printPageBtn = document.getElementById('print-page-btn');  
+              let animationObserver = null; // Declare observer variable
+
+              // --- Error Checking for Essential Elements ---  
+              if (!sidebar || !mobileMenuButton || !nav || !mainContentArea || !allSectionsTemplateContainer || !keywordModal || !modalTitle || !modalDefinition || !modalCloseBtn || !contactButtonsTemplate || !printPageBtn) {  
+                  console.error("Fatal Error: One or more essential HTML elements are missing. Page functionality will be limited.");  
+                  if (mainContentArea) { 
+                    mainContentArea.innerHTML = "<p class='text-red-500 p-4'>ページの読み込みにエラーが発生しました。重要な要素が見つかりません。</p>";  
+                  }
+                  return; 
+              }  
+
+              const originalSections = {};  
+              const sidebarStructure = [];   
+
+              // --- Initialize Sections and Sidebar Structure ---  
+              try {  
+                  allSectionsTemplateContainer.querySelectorAll('section.content-section').forEach(section => {  
+                      if (!section.id) {  
+                          console.warn("Section in template is missing an ID. Skipping.", section);  
+                          return;   
+                      }  
+                      originalSections[section.id] = section.cloneNode(true);  
+                      const h2 = section.querySelector('h2');  
+                      let sectionTitle = section.id; 
+                      if (h2 && h2.textContent) {  
+                          const titleParts = h2.textContent.trim().split('. ');  
+                          sectionTitle = titleParts.length > 1 ? titleParts.slice(1).join('. ') : titleParts[0];  
+                      }  
+                        
+                      let currentCategory = null;   
+                      if (["intro", "abe_share"].includes(section.id)) { currentCategory = null; } 
+                      else if (["chihaya_report", "fujikata_report", "watanabe_a_report", "tsuchiya_report", "abe_manager_report"].includes(section.id)) { currentCategory = "各担当者報告"; }  
+                      else if (["overall_summary", "action_items_list", "meeting_evaluation", "final_remarks"].includes(section.id)) { currentCategory = "会議総括・その他"; } 
+                      else { currentCategory = null; }  
+
+                      const lastSidebarItem = sidebarStructure.length > 0 ? sidebarStructure[sidebarStructure.length -1] : null;  
+                      if (currentCategory && (!lastSidebarItem || lastSidebarItem.type !== 'header' || lastSidebarItem.title !== currentCategory) ) {  
+                           sidebarStructure.push({type: 'header', title: currentCategory});  
+                      }  
+                      sidebarStructure.push({type: 'link', id: section.id, title: sectionTitle});  
+                        
+                      const collapsibleContent = originalSections[section.id].querySelector('.section-content-collapsible');  
+                      if (collapsibleContent) {  
+                          collapsibleContent.style.display = 'none';   
+                      }  
+                  });  
+              } catch (e) {  
+                  console.error("Error processing #all-sections-template children:", e);  
+                  mainContentArea.innerHTML = "<p class='text-red-500 p-4'>コンテンツテンプレートの読み込みエラーが発生しました。</p>";  
+                  return;  
+              }  
+                
+              // --- Build Sidebar Navigation ---  
+              try {  
+                  nav.innerHTML = ''; 
+                  let lastHeader = null;  
+                  sidebarStructure.forEach(item => {  
+                      if (item.type === 'header') {  
+                          if(item.title !== lastHeader) { 
+                              const h2 = document.createElement('h2');  
+                              h2.className = 'text-sm font-semibold text-slate-400 mt-4 mb-2 px-4';  
+                              h2.textContent = item.title;  
+                              nav.appendChild(h2);  
+                              lastHeader = item.title;  
+                          }  
+                      } else if (item.type === 'link') {  
+                          const a = document.createElement('a');  
+                          a.href = '#' + item.id;  
+                          a.className = 'sidebar-link block py-2.5 px-4 rounded transition duration-200 hover:bg-sky-700 hover:text-white';  
+                          a.dataset.target = item.id;  
+                          a.textContent = item.title;  
+                          nav.appendChild(a);  
+                      }  
+                  });  
+              } catch (e) {  
+                  console.error("Error building sidebar navigation:", e);  
+              }  
+                
+              // --- Action Items Data & Population ---  
+              const actionItemsData = [  
+                  {"担当者": "阿部部長", "次回のアクション": "LINEカンファレンス内容共有<br>SaaSアカウント最適化・AIツール導入提案（社長へ）<br>AIによるLP制作ツール選定・導入準備<br>Notion活用共有と強化", "期限目安": "適宜／次回", "status": "未着手", "notes": ""},  
+                  {"担当者": "千早氏", "次回のアクション": "効果検証フォーマット確立と数値報告<br>バナー制作時のA/Bテスト必須化と結果共有<br>Liny構築SOP確立と時間管理<br>AI画像生成スキル向上", "期限目安": "次回報告時", "status": "未着手", "notes": ""},  
+                  {"担当者": "藤方氏", "次回のアクション": "効果検証時の現場ヒアリング必須化<br>AI活用によるデータ分析訓練<br>One Team年間実績表に累計データ追加<br>家内SS予約システム刷新効果の分析方法再検討<br>永井石油様Liny構築完了<br>小出氏からのデジプリ販売者特定依頼対応", "期限目安": "次回報告時", "status": "未着手", "notes": ""}, 
+                  {"担当者": "渡辺氏", "次回のアクション": "名刺QRツールデザイン改善<br>名刺QRツール効果測定体制構築（配布数、読込数、A/Bテスト計画）<br>企画部会議報告フォーマット確立<br>大石氏との店舗作り知見共有調整", "期限目安": "次回報告時", "status": "未着手", "notes": ""},  
+                  {"担当者": "土屋氏", "次回のアクション": "社長報告資料ブラッシュアップ<br>洗車リーダー・アルバイトリーダー会議実施（6月）<br>等級制度バッジ/ステッカー試作品発表（6月）<br>Liny全社活用検討<br>堀之内SS トライさんOJTサポート継続", "期限目安": "次回報告時", "status": "未着手", "notes": ""}, 
+                  {"担当者": "全員", "次回のアクション": "データに基づいた改善活動の推進<br>AI技術の積極的な学習と活用<br>メンバー間の連携強化と情報共有", "期限目安": "継続", "status": "未着手", "notes": ""}  
+              ];  
+                
+              const templateActionItemsSection = originalSections['action_items_list'];  
+              if (templateActionItemsSection) {  
+                  const templateActionItemsTbody = templateActionItemsSection.querySelector('#action-items-tbody-all');  
+                  if (templateActionItemsTbody) {  
+                       actionItemsData.forEach((item, index) => {   
+                          const row = templateActionItemsTbody.insertRow();  
+                          const savedItem = JSON.parse(localStorage.getItem('actionItem-' + index)) || item;  
+                          row.innerHTML =   
+                              '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">' + savedItem["担当者"] + '</td>' +  
+                              '<td class="px-6 py-4 whitespace-normal text-sm text-slate-700 action-item-text">' + savedItem["次回のアクション"] + '</td>' +  // Changed key here
+                              '<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700">' + savedItem["期限目安"] + '</td>' +  
+                              '<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">' +  
+                                  '<select class="action-status-select p-1 border border-slate-300 rounded-md text-xs w-full min-w-[100px]" data-index="' + index + '">' +  
+                                      '<option value="未着手"' + (savedItem.status === "未着手" ? " selected" : "") + '>未着手</option>' +  
+                                      '<option value="進行中"' + (savedItem.status === "進行中" ? " selected" : "") + '>進行中</option>' +  
+                                      '<option value="完了"' + (savedItem.status === "完了" ? " selected" : "") + '>完了</option>' +  
+                                  '</select>' +  
+                              '</td>' +  
+                              '<td class="px-6 py-4 whitespace-normal text-sm text-slate-500">' +  
+                                  '<textarea class="action-notes-input p-1 border border-slate-300 rounded-md text-xs w-full min-h-[40px] resize-y" data-index="' + index + '" placeholder="メモ...">' + (savedItem.notes || '') + '</textarea>' +  
+                              '</td>';  
+                      });  
+                  } else {  
+                      console.warn("Action items table body (#action-items-tbody-all) not found in its section template.");  
+                  }  
+              } else {  
+                  console.warn("Action items section (action_items_list) not found in originalSections.");  
+              }  
+
+              // --- Intersection Observer for Scroll Animations ---
+              function initializeScrollAnimations(container) {
+                  if (animationObserver) {
+                      animationObserver.disconnect(); // Disconnect previous observer if any
+                  }
+
+                  const elementsToAnimate = container.querySelectorAll('.content-section > .bg-white.p-6.rounded-lg.shadow-lg');
+
+                  const observerCallback = (entries, observerInstance) => {
+                      entries.forEach(entry => {
+                          if (entry.isIntersecting) {
+                              entry.target.classList.add('animate-fade-in-up');
+                              observerInstance.unobserve(entry.target); // Animate only once
+                          }
+                      });
+                  };
+                  animationObserver = new IntersectionObserver(observerCallback, { threshold: 0.1 }); // Trigger when 10% is visible
+                  
+                  elementsToAnimate.forEach(el => {
+                      // Only observe if it hasn't already been animated (e.g. the top selected section)
+                      if (!el.classList.contains('animate-fade-in-up')) {
+                         animationObserver.observe(el);
+                      }
+                  });
+              }
+
+
+              // --- Content Rendering Function ---  
+              function renderContent(targetId) {  
+                  if (!mainContentArea || !allSectionsTemplateContainer) {  
+                      console.error("Render Error: Main content area or template container not found.");  
+                      if(mainContentArea) mainContentArea.innerHTML = "<p class='text-red-500 p-4'>コンテンツの表示にエラーが発生しました。</p>";  
+                      return;  
+                  }  
+                  mainContentArea.innerHTML = ''; 
+
+                  // 1. Render the selected section (expanded) at the top  
+                  const selectedSectionOriginal = originalSections[targetId];  
+                  if (selectedSectionOriginal) {  
+                      const selectedSectionClone = selectedSectionOriginal.cloneNode(true);  
+                      // Apply animation to the main card of the selected top section
+                      const mainCardOfSelectedSection = selectedSectionClone.querySelector('.bg-white.p-6.rounded-lg.shadow-lg');
+                      if (mainCardOfSelectedSection) {
+                          mainCardOfSelectedSection.classList.add('animate-fade-in-up');
+                      }
+                      
+                      const topCollapsible = selectedSectionClone.querySelector('.section-content-collapsible');  
+                      if (topCollapsible) {  
+                          topCollapsible.style.display = 'block'; 
+                          const topToggleButton = selectedSectionClone.querySelector('.toggle-content-btn');  
+                          if(topToggleButton) topToggleButton.textContent = '内容を閉じる';
+                      }  
+                      mainContentArea.appendChild(selectedSectionClone);  
+                        
+                      setTimeout(() => {   
+                          const targetElement = mainContentArea.firstChild; 
+                          if (targetElement && typeof targetElement.getBoundingClientRect === 'function') {  
+                              const mobileMenuContainer = document.getElementById('mobile-menu-button-container');  
+                              const headerOffset = mobileMenuContainer && window.getComputedStyle(mobileMenuContainer).display !== 'none' ? mobileMenuContainer.offsetHeight : 0;  
+                              const elementPosition = targetElement.getBoundingClientRect().top;  
+                              const offsetPosition = elementPosition + window.pageYOffset - (headerOffset + 16); 
+                              window.scrollTo({ top: offsetPosition, behavior: "smooth" });  
+                          }  
+                      }, 50); 
+                  } else {  
+                      console.warn("Section with ID " + targetId + " not found in template for selected display.");  
+                       mainContentArea.innerHTML = "<p class='text-orange-500 p-4'>選択されたセクションが見つかりませんでした。</p>";  
+                       return;   
+                  }  
+
+                  // 2. Add "Overall Display" separator title  
+                  const separator = document.createElement('div');  
+                  separator.className = 'overall-display-title';  
+                  separator.textContent = 'ー 全体表示 ー';  
+                  mainContentArea.appendChild(separator);  
+
+                  // 3. Render all other sections (collapsed) below the separator  
+                  const allSectionsContainer = document.createElement('div'); 
+                  mainContentArea.appendChild(allSectionsContainer);  
+
+                  Object.keys(originalSections).forEach(sectionId => {  
+                      const sectionOriginal = originalSections[sectionId];  
+                      if (sectionOriginal) {  
+                          const sectionCardClone = sectionOriginal.cloneNode(true);  
+                          
+                          const sectionWrapper = document.createElement('div');  
+                          sectionWrapper.className = 'content-section-wrapper';   
+                          sectionWrapper.appendChild(sectionCardClone);  
+
+                          const collapsible = sectionCardClone.querySelector('.section-content-collapsible');  
+                          const toggleButton = sectionCardClone.querySelector('.toggle-content-btn');  
+                          if (collapsible) {  
+                              collapsible.style.display = 'none'; 
+                               if(toggleButton) toggleButton.textContent = '内容を確認する';
+                          }  
+                          sectionCardClone.classList.add('scroll-mt-16', 'md:scroll-mt-4'); 
+                          allSectionsContainer.appendChild(sectionWrapper);  
+                      } else {  
+                           console.warn("Section with ID " + sectionId + " not found in template for overall display.");  
+                      }  
+                  });  
+                    
+                  // 4. Add contact buttons at the very end  
+                  if (contactButtonsTemplate) {  
+                      mainContentArea.appendChild(contactButtonsTemplate.content.cloneNode(true));  
+                  } else {  
+                      console.warn("Contact buttons template not found.");  
+                  }  
+
+                  // 5. Attach event listeners to all newly added content  
+                  attachAllEventListeners(mainContentArea);  
+                  
+                  // 6. Initialize scroll animations for the "Overall Display" sections
+                  initializeScrollAnimations(allSectionsContainer); 
+              }  
+                
+              // --- Helper to Attach All Event Listeners to a Parent Element ---  
+              function attachAllEventListeners(parentElement) {  
+                  if (!parentElement) return;  
+                  attachKeywordButtonListeners(parentElement);  
+                  attachToggleContentButtonListeners(parentElement);  
+                  attachActionItemListeners(parentElement);   
+                  attachHighlightPointListeners(parentElement);  
+              }  
+
+
+              // --- Update Active Sidebar Link ---  
+              function updateActiveLink(targetIdOrSubId) {  
+                   if (!nav) return;  
+                  let mainTargetId = targetIdOrSubId;  
+                  const activeLinkElement = nav.querySelector('.sidebar-link[data-target="' + targetIdOrSubId + '"], .sub-sidebar-link[data-target="' + targetIdOrSubId + '"]');  
+                  if (activeLinkElement && activeLinkElement.dataset.parentTarget) {  
+                      mainTargetId = activeLinkElement.dataset.parentTarget;  
+                  }  
+
+                  nav.querySelectorAll('.sidebar-link, .sub-sidebar-link').forEach(link => {  
+                      link.classList.remove('active');  
+                  });  
+
+                  const mainLink = nav.querySelector('.sidebar-link[data-target="' + mainTargetId + '"]');  
+                  if (mainLink) mainLink.classList.add('active');  
+                    
+                  if (activeLinkElement && activeLinkElement.classList.contains('sub-sidebar-link')) {  
+                      activeLinkElement.classList.add('active');  
+                  }  
+              }  
+                
+              // --- Mobile Menu Toggle ---  
+              if (mobileMenuButton && sidebar) {  
+                  mobileMenuButton.addEventListener('click', function() {  
+                      sidebar.classList.toggle('-translate-x-full');  
+                      const isExpanded = !sidebar.classList.contains('-translate-x-full');  
+                      mobileMenuButton.setAttribute('aria-expanded', isExpanded.toString());  
+                  });  
+              }  
+
+              // --- Sidebar Navigation Click Handling ---  
+              if (nav) {  
+                  nav.addEventListener('click', function(event) {  
+                      const link = event.target.closest('.sidebar-link, .sub-sidebar-link');  
+                      if (link && link.dataset.target) {  
+                          event.preventDefault(); 
+                          const targetId = link.dataset.target;  
+                          const isSubLink = link.classList.contains('sub-sidebar-link');  
+                            
+                          if (isSubLink) {  
+                              const parentTargetId = link.dataset.parentTarget;  
+                              renderContent(parentTargetId); 
+                              setTimeout(() => {   
+                                  const subTargetElement = document.getElementById(targetId);  
+                                  if (subTargetElement) {  
+                                      const mobileMenuContainer = document.getElementById('mobile-menu-button-container');  
+                                      const headerOffset = mobileMenuContainer && window.getComputedStyle(mobileMenuContainer).display !== 'none' ? mobileMenuContainer.offsetHeight : 0;  
+                                      const elementPosition = subTargetElement.getBoundingClientRect().top;  
+                                      const offsetPosition = elementPosition + window.pageYOffset - (headerOffset + 16);  
+                                      window.scrollTo({ top: offsetPosition, behavior: "smooth" });  
+                                  }  
+                                  const parentSectionElement = mainContentArea.querySelector('#' + parentTargetId + '.content-section'); 
+                                  if(parentSectionElement) {  
+                                      const collapsible = parentSectionElement.querySelector('.section-content-collapsible');  
+                                      const toggleBtn = parentSectionElement.querySelector('.toggle-content-btn');  
+                                      if (collapsible && toggleBtn && (collapsible.style.display === 'none' || collapsible.style.display === '')) {  
+                                          collapsible.style.display = 'block';  
+                                          toggleBtn.textContent = '内容を閉じる';
+                                      }  
+                                  }  
+                              }, 250); 
+                          } else {  
+                              renderContent(targetId); 
+                          }  
+                            
+                          updateActiveLink(targetId); 
+                          if (window.innerWidth < 768 && sidebar && !sidebar.classList.contains('-translate-x-full')) {   
+                              sidebar.classList.add('-translate-x-full');  
+                              mobileMenuButton.setAttribute('aria-expanded', 'false');  
+                          }  
+                      }  
+                  });  
+              }  
+                
+              // --- Initial Content Load ---  
+              let initialTargetId = "";  
+              if (window.location.hash) {  
+                  initialTargetId = window.location.hash.substring(1);  
+              } else if (nav && nav.querySelector('.sidebar-link')) {   
+                   initialTargetId = nav.querySelector('.sidebar-link').dataset.target;  
+              }  
+
+              if (initialTargetId && originalSections[initialTargetId]) {   
+                  renderContent(initialTargetId);   
+                  updateActiveLink(initialTargetId);  
+              } else if (nav && nav.querySelector('.sidebar-link')) { 
+                  initialTargetId = nav.querySelector('.sidebar-link').dataset.target;  
+                   if (originalSections[initialTargetId]) {  
+                      renderContent(initialTargetId);   
+                      updateActiveLink(initialTargetId);  
+                   }  
+              } else {  
+                  if (originalSections['intro']) {   
+                       renderContent('intro');  
+                       updateActiveLink('intro');  
+                  } else if (Object.keys(originalSections).length > 0) {  
+                      const firstSectionId = Object.keys(originalSections)[0];  
+                      renderContent(firstSectionId);  
+                      updateActiveLink(firstSectionId);  
+                  } else {  
+                      if (mainContentArea) mainContentArea.innerHTML = "<p class='text-red-500 p-4'>表示できるセクションがありません。</p>";  
+                  }  
+              }  
+
+              // --- Modal Functionality ---  
+              function openModal(title, definition) {  
+                  if(keywordModal && modalTitle && modalDefinition) {  
+                      modalTitle.textContent = title + " の解説";  
+                      modalDefinition.textContent = definition;  
+                      keywordModal.classList.add('active');  
+                  }  
+              }  
+
+              function closeModal() {  
+                  if(keywordModal) {  
+                      keywordModal.classList.remove('active');  
+                  }  
+              }  
+
+              if(modalCloseBtn) { modalCloseBtn.addEventListener('click', closeModal); }  
+              if(keywordModal) {  
+                  keywordModal.addEventListener('click', function(event) {  
+                      if (event.target === keywordModal) { closeModal(); } 
+                  });  
+              }  
+                
+              // --- Keyword Button Event Listeners ---  
+              function attachKeywordButtonListeners(parentElement) {  
+                  if (!parentElement) return;  
+                  parentElement.querySelectorAll('.keyword-btn').forEach(button => {  
+                      const newButton = button.cloneNode(true);  
+                      button.parentNode.replaceChild(newButton, button);  
+
+                      newButton.addEventListener('click', function() {  
+                          const keyword = this.dataset.keyword;  
+                          const definition = this.dataset.definition || "このキーワードの解説は準備中です。";  
+                          const sectionCard = this.closest('.bg-white.p-6.rounded-lg.shadow-lg');  
+                          if (!sectionCard) return;  
+                          const contentArea = sectionCard.querySelector('.text-content-for-highlight');  
+                          if (!contentArea) return;  
+
+                          const isCurrentlyActive = this.classList.contains('active-highlight');  
+
+                          sectionCard.querySelectorAll('.keyword-btn.active-highlight').forEach(btn => {  
+                              btn.classList.remove('active-highlight');  
+                          });  
+                            
+                          contentArea.innerHTML = contentArea.innerHTML.replace(/<span class="highlight"[^>]*>(.*?)<\/span>/gi, '$1');  
+
+                          if (!isCurrentlyActive) {   
+                              this.classList.add('active-highlight'); 
+                              const regex = new RegExp('(' + keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');  
+                                
+                              const walker = document.createTreeWalker(contentArea, NodeFilter.SHOW_TEXT, null, false);  
+                              let node;  
+                              const nodesToModify = []; 
+                              while(node = walker.nextNode()) { if (regex.test(node.nodeValue)) { nodesToModify.push(node); }}  
+                              nodesToModify.forEach(textNode => {  
+                                  if (!textNode.parentNode) return; 
+                                  const fragment = document.createDocumentFragment(); let lastIndex = 0;  
+                                  textNode.nodeValue.replace(regex, (match, p1, offset) => {  
+                                      fragment.appendChild(document.createTextNode(textNode.nodeValue.substring(lastIndex, offset)));  
+                                      const highlightSpan = document.createElement('span');  
+                                      highlightSpan.className = 'highlight';  
+                                      highlightSpan.setAttribute('data-keyword', keyword); 
+                                      highlightSpan.textContent = p1; 
+                                      fragment.appendChild(highlightSpan);  
+                                      lastIndex = offset + match.length;  
+                                  });  
+                                  fragment.appendChild(document.createTextNode(textNode.nodeValue.substring(lastIndex)));  
+                                  textNode.parentNode.replaceChild(fragment, textNode);  
+                              });  
+                              openModal(keyword, definition); 
+                          } else {   
+                              closeModal();  
+                          }  
+                      });  
+                  });  
+              }  
+
+              // --- Toggle Content Button Event Listeners ---  
+              function attachToggleContentButtonListeners(parentElement) {  
+                  if (!parentElement) return;  
+                  parentElement.querySelectorAll('.toggle-content-btn').forEach(button => {  
+                      const newButton = button.cloneNode(true); 
+                      button.parentNode.replaceChild(newButton, button);  
+                        
+                      newButton.addEventListener('click', function() {  
+                          const sectionCard = this.closest('.bg-white.p-6.rounded-lg.shadow-lg');  
+                          if (!sectionCard) return;  
+                          const collapsibleContent = sectionCard.querySelector('.section-content-collapsible');  
+                          if (!collapsibleContent) return;  
+                          if (collapsibleContent.style.display === 'none' || collapsibleContent.style.display === '') {  
+                              collapsibleContent.style.display = 'block'; this.textContent = '内容を閉じる'; 
+                          } else {  
+                              collapsibleContent.style.display = 'none'; this.textContent = '内容を確認する'; 
+                          }  
+                      });  
+                  });  
+              }  
+              // --- Action Item Status/Notes Change Listeners (localStorage update) ---  
+               function attachActionItemListeners(parentElement) {  
+                  if (!parentElement) return;  
+                  parentElement.querySelectorAll('.action-status-select, .action-notes-input').forEach(input => {  
+                      const newInteractiveElement = input.cloneNode(true); 
+                      input.parentNode.replaceChild(newInteractiveElement, input);  
+
+                      const eventType = newInteractiveElement.tagName.toLowerCase() === 'select' ? 'change' : 'input';  
+                      newInteractiveElement.addEventListener(eventType, function() {  
+                          const index = parseInt(this.dataset.index, 10); 
+                          if (actionItemsData[index]) {  
+                              const itemToUpdate = actionItemsData[index];  
+                              if (this.classList.contains('action-status-select')) {  
+                                  itemToUpdate.status = this.value;  
+                              } else if (this.classList.contains('action-notes-input')) {  
+                                  itemToUpdate.notes = this.value;  
+                              }  
+                              try {  
+                                  localStorage.setItem('actionItem-' + index, JSON.stringify(itemToUpdate));  
+                              } catch (e) {  
+                                  console.error("Error saving to localStorage:", e);  
+                              }  
+                          } else {  
+                              console.warn("Action item data not found for index:", index);  
+                          }  
+                      });  
+                  });  
+              }  
+                
+              // --- Highlightable Text Click Listener ---  
+              function attachHighlightPointListeners(parentElement) {  
+                  if (!parentElement) return;  
+                  parentElement.querySelectorAll('.highlightable-text').forEach(elem => {  
+                      const newElem = elem.cloneNode(true); 
+                      elem.parentNode.replaceChild(newElem, elem);  
+
+                      newElem.addEventListener('click', function(event) {  
+                          if (event.target === this || event.target.parentNode === this || event.target.tagName === 'STRONG' || event.target.tagName === 'EM' || event.target.tagName === 'B' || event.target.tagName === 'I') {   
+                              this.classList.toggle('highlight-point');  
+                          }  
+                      });  
+                  });  
+              }  
+                
+              // --- Print Button Functionality ---  
+              if(printPageBtn) {  
+                  printPageBtn.addEventListener('click', function() { window.print(); });  
+              }  
+          });  
+      </script>  
+  </body>  
+  </html>
